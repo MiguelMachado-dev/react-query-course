@@ -1,33 +1,25 @@
-import { useQuery } from "@tanstack/react-query";
-import "./App.css";
-
-function fetchUser(username) {
-  return fetch(`https://api.github.com/users/${username}`)
-  .then((res) => res.json());
-}
-
-function GithubUser({ username }) {
-  const userQuery = useQuery(
-    [username],
-    () => fetchUser(username)
-  )
-
-  const data = userQuery.data;
-
-  if (userQuery.isLoading) return <p>Loading...</p>;
-  if (userQuery.isError) return <p>Error: { useQuery.error.message}</p>;
-
-  return (
-    <pre>
-      {JSON.stringify(data, null, 2)}
-    </pre>
-  )
-}
+import { Route, Routes, Link, useMatch } from "react-router-dom";
+import Issues from "./pages/Issues";
+import Issue from "./pages/Issue";
+import AddIssue from "./pages/AddIssue";
 
 function App() {
-  return (<div className="App">
-    <GithubUser username="MiguelMachado-dev" />
-  </div>)
+  const isRootPath = useMatch({ path: "/", end: true });
+  return (
+    <div className="App">
+      {!isRootPath ? (
+        <Link to="/">Back to Issues List</Link>
+      ) : (
+        <span>&nbsp;</span>
+      )}
+      <h1>Issue Tracker</h1>
+      <Routes>
+        <Route path="/" element={<Issues />} />
+        <Route path="/add" element={<AddIssue />} />
+        <Route path="/issue/:number" element={<Issue />} />
+      </Routes>
+    </div>
+  );
 }
 
 export default App;
